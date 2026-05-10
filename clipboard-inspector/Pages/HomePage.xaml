@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="clipboard_inspector.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:clipboard_inspector.Models"
+    mc:Ignorable="d">
+
+    <Grid Padding="24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <InfoBar
+            Title="{x:Bind ViewModel.StatusTitle,
+                           Mode=OneWay}"
+            Grid.Row="0"
+            IsOpen="{x:Bind ViewModel.IsStatusOpen,
+                            Mode=TwoWay}"
+            Message="{x:Bind ViewModel.StatusMessage,
+                             Mode=OneWay}"
+            Severity="{x:Bind ViewModel.StatusSeverity,
+                              Mode=OneWay}" />
+
+        <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
+            <AppBarButton
+                AutomationProperties.AutomationId="RefreshClipboardButton"
+                Command="{x:Bind ViewModel.RefreshCommand}"
+                Label="Refresh">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Refresh" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                AutomationProperties.AutomationId="OpenTextButton"
+                Command="{x:Bind ViewModel.OpenTextInNotepadCommand}"
+                IsEnabled="{x:Bind ViewModel.HasText,
+                                   Mode=OneWay}"
+                Label="Open text in Notepad">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Document" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                AutomationProperties.AutomationId="OpenHtmlButton"
+                Command="{x:Bind ViewModel.OpenHtmlInNotepadCommand}"
+                IsEnabled="{x:Bind ViewModel.HasHtml,
+                                   Mode=OneWay}"
+                Label="Open HTML">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="World" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                AutomationProperties.AutomationId="OpenUriButton"
+                Command="{x:Bind ViewModel.OpenUriCommand}"
+                IsEnabled="{x:Bind ViewModel.HasUri,
+                                   Mode=OneWay}"
+                Label="Open link">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Go" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                AutomationProperties.AutomationId="RevealFileButton"
+                Command="{x:Bind ViewModel.RevealFirstItemCommand}"
+                IsEnabled="{x:Bind ViewModel.HasFiles,
+                                   Mode=OneWay}"
+                Label="Reveal file">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="OpenFile" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                AutomationProperties.AutomationId="OpenImageButton"
+                Command="{x:Bind ViewModel.OpenImageExternallyCommand}"
+                IsEnabled="{x:Bind ViewModel.HasImage,
+                                   Mode=OneWay}"
+                Label="Open image">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Pictures" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarSeparator />
+            <AppBarElementContainer>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <ProgressRing
+                        Width="20"
+                        Height="20"
+                        IsActive="{x:Bind ViewModel.IsBusy,
+                                          Mode=OneWay}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind ViewModel.MonitoringText,
+                                      Mode=OneWay}" />
+                </StackPanel>
+            </AppBarElementContainer>
+        </CommandBar>
+
+        <Grid
+            x:Name="WorkspaceGrid"
+            Grid.Row="2"
+            ColumnSpacing="24"
+            RowSpacing="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer
+                x:Name="OverviewPanel"
+                Grid.Row="0"
+                Grid.Column="0"
+                AutomationProperties.AutomationId="OverviewPanel"
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto">
+                <StackPanel Spacing="24">
+                    <StackPanel Spacing="8">
+                        <TextBlock
+                            AutomationProperties.AutomationId="ContentTitle"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="{x:Bind ViewModel.ContentTitle,
+                                          Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="ContentSummary"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SummaryBody,
+                                          Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="DetectedFormatsText"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Bind ViewModel.DetectedFormatsText,
+                                          Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="LastAnalyzedText"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Bind ViewModel.LastAnalyzedText,
+                                          Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Summary" />
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.SummaryItems, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClipboardSummaryItem">
+                                    <Grid Margin="0,0,0,8" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind Label}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Bind Value}"
+                                            TextWrapping="WrapWholeWords" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Session history" />
+                        <TextBlock
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Bind ViewModel.HistoryStatusText,
+                                          Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <ListView
+                            AutomationProperties.AutomationId="HistoryListView"
+                            ItemsSource="{x:Bind ViewModel.HistoryItems,
+                                                 Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.SelectedHistoryItem,
+                                                  Mode=TwoWay}"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClipboardHistoryItem">
+                                    <StackPanel Margin="0,6,0,6" Spacing="4">
+                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" />
+                                        <TextBlock
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Bind Detail}"
+                                            TextWrapping="WrapWholeWords" />
+                                        <TextBlock
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind FormatsText}"
+                                            TextWrapping="WrapWholeWords" />
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind CapturedText}" />
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind SourceText}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Available actions" />
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.ActionItems, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClipboardActionItem">
+                                    <StackPanel Margin="0,0,0,12" Spacing="4">
+                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" />
+                                        <TextBlock
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Bind Detail}"
+                                            TextWrapping="WrapWholeWords" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Outline" />
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.OutlineItems, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClipboardOutlineItem">
+                                    <StackPanel Margin="0,0,0,12" Spacing="4">
+                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" />
+                                        <TextBlock
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Bind Detail}"
+                                            TextWrapping="WrapWholeWords" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <TabView
+                x:Name="DetailsPanel"
+                Grid.Row="0"
+                Grid.Column="1"
+                AutomationProperties.AutomationId="DetailsPanel"
+                IsAddTabButtonVisible="False">
+                <TabViewItem
+                    x:Name="TextDetailsTab"
+                    Header="Text"
+                    Visibility="{x:Bind ViewModel.TextTabVisibility,
+                                        Mode=OneWay}">
+                    <Grid RowSpacing="12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Spacing="4">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Char inspector" />
+                            <TextBlock
+                                x:Name="TextSelectionDetailsText"
+                                AutomationProperties.AutomationId="TextSelectionDetailsText"
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Select text to inspect characters, words, and lines."
+                                TextWrapping="WrapWholeWords" />
+                        </StackPanel>
+                        <TextBox
+                            x:Name="TextPayloadTextBox"
+                            Grid.Row="1"
+                            VerticalAlignment="Stretch"
+                            AcceptsReturn="True"
+                            AutomationProperties.AutomationId="TextPayloadText"
+                            FontFamily="Consolas"
+                            IsReadOnly="True"
+                            SelectionChanged="TextPayloadTextBox_SelectionChanged"
+                            Text="{x:Bind ViewModel.PlainText,
+                                          Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </TabViewItem>
+                <TabViewItem
+                    x:Name="HtmlDetailsTab"
+                    Header="HTML"
+                    Visibility="{x:Bind ViewModel.HtmlTabVisibility,
+                                        Mode=OneWay}">
+                    <TextBox
+                        VerticalAlignment="Stretch"
+                        AcceptsReturn="True"
+                        AutomationProperties.AutomationId="HtmlPayloadText"
+                        FontFamily="Consolas"
+                        IsReadOnly="True"
+                        Text="{x:Bind ViewModel.HtmlText,
+                                      Mode=OneWay}"
+                        TextWrapping="NoWrap" />
+                </TabViewItem>
+                <TabViewItem
+                    x:Name="RtfDetailsTab"
+                    Header="RTF"
+                    Visibility="{x:Bind ViewModel.RtfTabVisibility,
+                                        Mode=OneWay}">
+                    <TextBox
+                        VerticalAlignment="Stretch"
+                        AcceptsReturn="True"
+                        AutomationProperties.AutomationId="RtfPayloadText"
+                        FontFamily="Consolas"
+                        IsReadOnly="True"
+                        Text="{x:Bind ViewModel.RtfText,
+                                      Mode=OneWay}"
+                        TextWrapping="NoWrap" />
+                </TabViewItem>
+                <TabViewItem
+                    x:Name="FilesDetailsTab"
+                    Header="Files"
+                    Visibility="{x:Bind ViewModel.FilesTabVisibility,
+                                        Mode=OneWay}">
+                    <Grid RowSpacing="12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            FontFamily="Consolas"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.FileListText,
+                                          Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <ListView
+                            Grid.Row="1"
+                            AutomationProperties.AutomationId="FileListView"
+                            IsItemClickEnabled="False"
+                            ItemsSource="{x:Bind ViewModel.FileItems,
+                                                 Mode=OneWay}"
+                            SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClipboardFileItem">
+                                    <StackPanel Margin="0,6,0,6" Spacing="4">
+                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Name}" />
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind Kind}" />
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind Size}" />
+                                        <TextBlock
+                                            FontFamily="Consolas"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Bind Path}"
+                                            TextWrapping="WrapWholeWords" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </TabViewItem>
+                <TabViewItem
+                    x:Name="ImageDetailsTab"
+                    Header="Image"
+                    Visibility="{x:Bind ViewModel.ImageTabVisibility,
+                                        Mode=OneWay}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
+                        <StackPanel Spacing="12">
+                            <TextBlock
+                                AutomationProperties.AutomationId="ImageDetailsText"
+                                FontFamily="Consolas"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{x:Bind ViewModel.ImageDetailsText,
+                                              Mode=OneWay}"
+                                TextWrapping="WrapWholeWords" />
+                            <Image
+                                MaxHeight="640"
+                                HorizontalAlignment="Stretch"
+                                AutomationProperties.AutomationId="ImagePreview"
+                                Source="{x:Bind ViewModel.ImagePreviewSource,
+                                                Mode=OneWay}"
+                                Stretch="Uniform" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabViewItem>
+            </TabView>
+        </Grid>
+    </Grid>
+</Page>

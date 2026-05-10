@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="clipboard_inspector.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer Padding="24,16,24,16">
+        <StackPanel Spacing="16">
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="About Clipboard Inspector" />
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Clipboard Inspector is a developer-focused WinUI app for examining the current Windows clipboard in technical detail." />
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="When the app opens, it analyzes the clipboard immediately. While the window stays open, clipboard changes are detected automatically and the analysis refreshes in place." />
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Recent clipboard items are cached only in session memory so you can inspect clipboard history while the app is running. That cache is cleared when the app closes." />
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="The inspector outlines the payload type, format inventory, hashes, metrics, structure hints, file drops, images, and links, then surfaces context-specific actions such as opening text in Notepad, revealing files, and viewing images externally." />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

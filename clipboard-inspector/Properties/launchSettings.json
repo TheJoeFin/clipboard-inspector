@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "clipboard-inspector (Packaged)": {
+      "commandName": "MsixPackage"
+    },
+    "clipboard-inspector (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

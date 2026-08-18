@@ -5,15 +5,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:clipboard_inspector.Models"
     mc:Ignorable="d">
 
     <ScrollViewer Padding="24,16,24,16">
-        <StackPanel Spacing="16">
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="About Clipboard Inspector" />
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Clipboard Inspector is a developer-focused WinUI app for examining the current Windows clipboard in technical detail." />
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="When the app opens, it analyzes the clipboard immediately. While the window stays open, clipboard changes are detected automatically and the analysis refreshes in place." />
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Recent clipboard items are cached only in session memory so you can inspect clipboard history while the app is running. That cache is cleared when the app closes." />
-            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="The inspector outlines the payload type, format inventory, hashes, metrics, structure hints, file drops, images, and links, then surfaces context-specific actions such as opening text in Notepad, revealing files, and viewing images externally." />
+        <StackPanel MaxWidth="720" HorizontalAlignment="Left" Spacing="24">
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="16">
+                <Image
+                    Width="72"
+                    Height="72"
+                    VerticalAlignment="Top"
+                    AutomationProperties.AccessibilityView="Raw"
+                    Source="ms-appx:///Assets/Clipboard-Inspector.png" />
+                <StackPanel VerticalAlignment="Center" Spacing="4">
+                    <TextBlock
+                        AutomationProperties.AutomationId="AppNameText"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="{x:Bind ViewModel.AppName}" />
+                    <TextBlock
+                        AutomationProperties.AutomationId="AppVersionText"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="{x:Bind ViewModel.VersionSummary}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Clipboard Inspector is a developer-focused WinUI app for examining the current Windows clipboard in technical detail." TextWrapping="WrapWholeWords" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="When the app opens, it analyzes the clipboard immediately. While the window stays open, clipboard changes are detected automatically and the analysis refreshes in place." TextWrapping="WrapWholeWords" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Recent clipboard items are cached only in session memory so you can inspect clipboard history while the app is running. That cache is cleared when the app closes." TextWrapping="WrapWholeWords" />
+                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="The inspector outlines the payload type, format inventory, hashes, metrics, structure hints, file drops, images, and links, then surfaces context-specific actions such as opening text in Notepad, revealing files, and viewing images externally." TextWrapping="WrapWholeWords" />
+            </StackPanel>
+
+            <StackPanel Spacing="12">
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Build details" />
+                <ItemsControl AutomationProperties.AutomationId="AppInfoList" ItemsSource="{x:Bind ViewModel.InfoItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:AppInfoItem">
+                            <Grid Margin="0,0,0,8" ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind Label}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Bind Value}"
+                                    TextWrapping="WrapWholeWords" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Page>

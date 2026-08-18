@@ -1,3 +1,4 @@
+using clipboard_inspector.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -7,6 +8,8 @@ namespace clipboard_inspector.Pages;
 
 public sealed partial class AboutPage : Page
 {
+    public AboutPageViewModel ViewModel { get; } = new();
+
     public AboutPage()
     {
         InitializeComponent();

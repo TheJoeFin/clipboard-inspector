@@ -11,7 +11,7 @@
   <Identity
     Name="ClipboardInspector"
     Publisher="CN=Joseph Finney, O=Joseph Finney, L=Milwaukee, S=Wisconsin, C=US, PostalCode=53212"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="F7B465AC-8DB0-4518-808E-F773AE237173" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

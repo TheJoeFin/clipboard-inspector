@@ -17,7 +17,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-        AppWindow.SetIcon("Assets/AppIcon.ico");
+        AppWindow.SetIcon("Assets/Clipboard-Inspector.ico");
         NavFrame.Navigate(typeof(HomePage));
         Closed += MainWindow_Closed;
     }
